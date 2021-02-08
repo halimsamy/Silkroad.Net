@@ -14,7 +14,7 @@ namespace Silkroad.Network.Messaging.Handshake {
         private uint _localPublic;
         private uint _remotePublic;
 
-        [MessageService(Opcodes.HANDSHAKE)]
+        [MessageHandler(Opcodes.HANDSHAKE)]
         public Task Handshake(Session session, Message msg) {
             var protocol = session.Protocol;
 
@@ -51,7 +51,7 @@ namespace Silkroad.Network.Messaging.Handshake {
             return Task.CompletedTask;
         }
 
-        [MessageService(Opcodes.HANDSHAKE_ACCEPT)]
+        [MessageHandler(Opcodes.HANDSHAKE_ACCEPT)]
         public Task HandshakeAccept(Session session, Message msg) {
             throw new InvalidOperationException();
         }

@@ -16,7 +16,7 @@ namespace Silkroad.Network.Messaging {
             HANDSHAKE = 0x5000,
             HANDSHAKE_ACCEPT = 0x9000,
             IDENTITY = 0x2001,
-            PING = 0x2002,
+            HEARTBEAT = 0x2002,
             MODULE_CERTIFICATION_REQUEST = 0x6003,
             MODULE_CERTIFICATION_RESPONSE = 0xA003,
             MODULE_RELAY_REQUEST = 0x6008,

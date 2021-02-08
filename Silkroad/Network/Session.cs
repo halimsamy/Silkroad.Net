@@ -20,7 +20,12 @@ namespace Silkroad.Network {
         /// <summary>
         ///     A list of registered handlers.
         /// </summary>
-        private readonly List<MessageHandler> _handlers = new List<MessageHandler>();
+        private readonly List<Tuple<ushort, MessageHandler>> _handlers = new List<Tuple<ushort, MessageHandler>>();
+
+        /// <summary>
+        ///     A list of registered services.
+        /// </summary>
+        private readonly List<object> _services = new List<object>();
 
         /// <summary>
         ///     The underlying socket.
@@ -67,8 +72,20 @@ namespace Silkroad.Network {
             GC.SuppressFinalize(this);
         }
 
+        private void Dispose(bool disposing) {
+            this.ReleaseUnmanagedResources();
+            if (disposing) {
+                this._socket?.Dispose();
+            }
+        }
+
         ~Session() {
             this.Dispose(false);
+        }
+
+        private void ReleaseUnmanagedResources() {
+            this._services.Clear();
+            this._handlers.Clear();
         }
 
         /// <summary>
@@ -78,13 +95,19 @@ namespace Silkroad.Network {
         /// <param name="service">The service to be registered.</param>
         /// <typeparam name="T">The service type.</typeparam>
         public void RegisterService<T>(T service) where T : class {
-            if (this.FindService<T>() == null) {
-                foreach (var m in from method in service.GetType()
-                        .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                    where method.GetCustomAttribute<MessageServiceAttribute>() != null
-                    select method) {
-                    this._handlers.Add((MessageHandler) Delegate.CreateDelegate(typeof(MessageHandler), service, m));
-                }
+            if (this.FindService<T>() != null) {
+                return;
+            }
+
+            this._services.Add(service);
+
+            foreach (var (method, attr) in from method in service.GetType()
+                    .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                let attr = method.GetCustomAttribute<MessageHandlerAttribute>()
+                where attr != null
+                select (method, attr)) {
+                var hnd = (MessageHandler) Delegate.CreateDelegate(typeof(MessageHandler), service, method);
+                this._handlers.Add(Tuple.Create(attr.Opcode, hnd));
             }
         }
 
@@ -98,12 +121,34 @@ namespace Silkroad.Network {
         }
 
         /// <summary>
+        ///     Removes a registered service and it's registered handlers.
+        /// </summary>
+        /// <param name="removeHandlers">Whether to remove the registered handlers that belongs to the service.</param>
+        /// <typeparam name="T">The service type.</typeparam>
+        public void RemoveService<T>(bool removeHandlers = true) where T : class {
+            var service = this.FindService<T>();
+            if (service == null) {
+                return;
+            }
+
+            this._services.Remove(service);
+
+            if (!removeHandlers) {
+                return;
+            }
+
+            foreach (var handler in this._handlers.Where(x => x.Item2.Target?.GetType() == typeof(T))) {
+                this._handlers.Remove(handler);
+            }
+        }
+
+        /// <summary>
         ///     Finds a service in the registered services.
         /// </summary>
         /// <typeparam name="T">The service type.</typeparam>
         /// <returns>The requested service, or <c>null</c> if it's registered.</returns>
         public T FindService<T>() where T : class {
-            return (T) this._handlers.FirstOrDefault(h => h.Target?.GetType() == typeof(T))?.Target;
+            return (T) this._services.FirstOrDefault(s => s.GetType() == typeof(T));
         }
 
         /// <summary>
@@ -112,9 +157,16 @@ namespace Silkroad.Network {
         /// </summary>
         /// <param name="handler">The handler to register.</param>
         public void RegisterHandler(MessageHandler handler) {
-            if (this._handlers.FirstOrDefault(h => h == handler) == null) {
-                this._handlers.Add(handler);
+            if (this._handlers.FirstOrDefault(x => x.Item2 == handler) != null) {
+                return;
             }
+
+            var attr = handler.GetMethodInfo()?.GetCustomAttribute<MessageHandlerAttribute>();
+            if (attr == null) {
+                return;
+            }
+
+            this._handlers.Add(Tuple.Create(attr.Opcode, handler));
         }
 
         /// <summary>
@@ -270,10 +322,10 @@ namespace Silkroad.Network {
                 return;
             }
 
-            foreach (var handler in from handler in this._handlers
-                where handler.GetMethodInfo()?.GetCustomAttribute<MessageServiceAttribute>()?.Opcode == msg.ID.Value
-                select handler) {
-                await handler.Invoke(this, msg);
+            foreach (var (opcode, handler) in this._handlers) {
+                if (msg.ID.Value == opcode) {
+                    await handler.Invoke(this, msg).ConfigureAwait(false);
+                }
             }
         }
 
@@ -309,7 +361,7 @@ namespace Silkroad.Network {
         /// <returns></returns>
         public async Task RunAsync() {
             // Just want to ensure that the handshake is done.
-            await this.HandshakeAsync();
+            await this.HandshakeAsync().ConfigureAwait(false);
 
             while (true) {
                 var msg = await this.ReceiveAsync().ConfigureAwait(false);
@@ -321,17 +373,6 @@ namespace Silkroad.Network {
                 }
 
                 await this.RespondAsync(msg).ConfigureAwait(false);
-            }
-        }
-
-        private void ReleaseUnmanagedResources() {
-            this._handlers.Clear();
-        }
-
-        private void Dispose(bool disposing) {
-            this.ReleaseUnmanagedResources();
-            if (disposing) {
-                this._socket?.Dispose();
             }
         }
     }

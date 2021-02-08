@@ -67,7 +67,7 @@ namespace Silkroad.Network.Messaging.Handshake {
             await session.SendAsync(msg);
         }
 
-        [MessageService(Opcodes.HANDSHAKE)]
+        [MessageHandler(Opcodes.HANDSHAKE)]
         public Task Handshake(Session session, Message msg) {
             var protocol = session.Protocol;
             if (protocol.State != MessageProtocolState.WaitChallenge) {
@@ -108,7 +108,7 @@ namespace Silkroad.Network.Messaging.Handshake {
             return session.SendAsync(res);
         }
 
-        [MessageService(Opcodes.HANDSHAKE_ACCEPT)]
+        [MessageHandler(Opcodes.HANDSHAKE_ACCEPT)]
         public Task HandshakeAccept(Session session, Message msg) {
             var protocol = session.Protocol;
             if (protocol.State != MessageProtocolState.WaitAccept) {

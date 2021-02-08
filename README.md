@@ -24,7 +24,7 @@ private static async Task Main(string[] args) {
 }
 
 private class MyClientlessService {
-    [MessageService(Opcodes.HANDSHAKE)]
+    [MessageHandler(Opcodes.HANDSHAKE)]
     public Task HandshakeDone(Session session, Message msg) {
         // the handshake has to be completed first. as the client receive 2 HANDSHAKE messages. 
         if (!session.Ready) {
@@ -39,7 +39,7 @@ private class MyClientlessService {
         return session.SendAsync(identity);
     }
 
-    [MessageService(Opcodes.IDENTITY)]
+    [MessageHandler(Opcodes.IDENTITY)]
     public Task Identity(Session session, Message msg) {
         return Task.CompletedTask;
     }
