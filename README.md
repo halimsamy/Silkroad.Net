@@ -1,15 +1,19 @@
 ﻿# Silkroad.Net
-An unofficial .NET API Wrapper for [Silkroad Online]. This was written to allow easier writing of bots, emulators and cheat guards.
+An unofficial .NET API wrapper for [Silkroad Online]. This was written to allow easier writing of bots, emulators and cheat guards.
 
 [Silkroad Online]: https://www.silkroadonline.net/
 
-## Motivation
-**I made this project for fun!**, I don't care about [Silkroad Online] anymore, and this is the main reason why I'm releasing this to
-the public, however, feel free to contribute, discuss things with me if you want, push and clone this repo.
-I _may_ push and update this repo from time to time, but I don't really care if things are bad or slow or whatever is it.
+## vs SilkroadSecurityAPI
+A compression against SilkroadSecurityAPI created by [pushedx].
 
-## Example
-A very simple simple simple Clientless example.
+* Clean code, and powered by .NET Core 3 (requires at least C# 7.0).
+* Up to 2~3x faster. (do the benchmarking yourself!)
+* Less memory usage. (measure yourself!)
+* Using Task-based Asynchronous Pattern (async/await) in favor of Asynchronous Programming Model (APM).
+* More abstract with reusable components called services. (check the examples)
+
+## Examples
+Connecting to Silkroad's official server. 
 ```c#
 // async Main requires C# 7.0+
 private static async Task Main(string[] args) {
@@ -34,19 +38,24 @@ private static async Task Main(string[] args) {
     }
 }
 
+// A not-ready-to-use service, missing a lot of implementations,
+// However, this is just a demo to show up how to use services.
 private class MyClientlessService {
     [MessageHandler(Opcodes.HANDSHAKE)]
     public Task HandshakeDone(Session session, Message msg) {
-        // the handshake has to be completed first. as the client receive 2 HANDSHAKE messages. 
+        // The handshake has to be completed first,
+        // as the client receives 2 HANDSHAKE messages. 
         if (!session.Ready) {
             return Task.CompletedTask;
         }
 
+        // Prepare the response.
         var identity = new Message(Opcodes.IDENTITY, true);
         identity.Write("SR_Client");
         identity.Write<byte>(0);
+
+        // C# tip: return the Send Task, don't create a useless StateMachine.
         // await session.SendAsync(identity);
-        // we don't want to create a useless StateMachine. so return the send Task and don't await it.
         return session.SendAsync(identity);
     }
 
@@ -54,9 +63,6 @@ private class MyClientlessService {
     public Task Identity(Session session, Message msg) {
         return Task.CompletedTask;
     }
-	
-    // TODO: Complete this Clientless connection service,
-    // this is just a demo/example.
 }
 ``` 
 
