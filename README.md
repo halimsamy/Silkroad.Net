@@ -16,11 +16,22 @@ private static async Task Main(string[] args) {
     var session = new Session();
     session.RegisterService<MyClientlessService>();
 	
-    await session.ConnectAsync("127.0.0.1", 15779);
-    Console.WriteLine("Client connected.");
+    try {
+        await session.ConnectAsync("gwgt1.joymax.com", 15779);
+        Console.WriteLine("Client connected.");
+    } catch (System.Net.Sockets.SocketException) {
+        Console.WriteLine("Unable to connect.")
+    } 
 	
-    await session.RunAsync();
-    Console.WriteLine("Client disconnected.");
+    try {
+        await session.RunAsync();
+    } catch (Silkroad.Network.RemoteDisconnectedException) {
+        Console.WriteLine("You have been disconnected from the server.");
+    } catch (Silkroad.Network.Messaging.InvalidMessageException) {
+    } catch (Silkroad.Network.Messaging.Handshake.DistortedHandshakeException) {
+    } catch (Silkroad.Network.Messaging.Handshake.InvalidHandshakeException) {
+    } catch (System.Net.Sockets.SocketException) {
+    }
 }
 
 private class MyClientlessService {

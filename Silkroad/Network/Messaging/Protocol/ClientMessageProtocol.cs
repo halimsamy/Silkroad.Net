@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Silkroad.Network.Messaging.Protocol {
+﻿namespace Silkroad.Network.Messaging.Protocol {
     /// <summary>
     ///     Implements a Silkroad Client messaging protocol.
     /// </summary>
@@ -22,8 +20,13 @@ namespace Silkroad.Network.Messaging.Protocol {
             // to ensure that there is no third-party in the connection.
             // but we can also count on that to validate the messages coming from
             // the server as well, this won't harm anyway. 
-            if (msg.Sequence != 0 || msg.CRC != 0) {
-                throw new InvalidOperationException();
+
+            if (msg.Sequence != 0) {
+                throw new InvalidMessageException(InvalidMessageReason.InvalidSequence);
+            }
+
+            if (msg.CRC != 0) {
+                throw new InvalidMessageException(InvalidMessageReason.InvalidCRC);
             }
         }
 

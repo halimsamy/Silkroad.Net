@@ -44,7 +44,7 @@ namespace Silkroad.Network.Messaging.Handshake {
 
             // Make sure we aren't in a state to accept handshake-less connections.
             if (protocol.State != MessageProtocolState.None) {
-                throw new InvalidOperationException();
+                throw new DistortedHandshakeException();
             }
 
             protocol.State = MessageProtocolState.Completed;
@@ -53,13 +53,13 @@ namespace Silkroad.Network.Messaging.Handshake {
 
         [MessageHandler(Opcodes.HANDSHAKE_ACCEPT)]
         public Task HandshakeAccept(Session session, Message msg) {
-            throw new InvalidOperationException();
+            throw new DistortedHandshakeException();
         }
 
         private Message Setup(Session session, Message msg) {
             var protocol = session.Protocol;
             if (protocol.State != MessageProtocolState.WaitSetup) {
-                throw new InvalidOperationException();
+                throw new DistortedHandshakeException();
             }
 
             msg.Read(this._key.AsSpan());
@@ -90,7 +90,7 @@ namespace Silkroad.Network.Messaging.Handshake {
         private Message Challenge(Session session, Message msg) {
             var protocol = session.Protocol;
             if (protocol.State != MessageProtocolState.WaitChallenge) {
-                throw new InvalidOperationException();
+                throw new DistortedHandshakeException();
             }
 
             var remoteChallenge = new byte[sizeof(ulong)].AsSpan();
@@ -101,7 +101,7 @@ namespace Silkroad.Network.Messaging.Handshake {
             protocol.Blowfish.Encrypt(expected);
 
             if (remoteChallenge == expected) {
-                throw new InvalidOperationException();
+                throw new InvalidHandshakeException();
             }
 
             HandshakeHelpers.KeyTransformValue(this._key.AsSpan(), this._commonSecret, 3);

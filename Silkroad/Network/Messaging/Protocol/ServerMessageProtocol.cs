@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Silkroad.Network.Messaging.Protocol {
+﻿namespace Silkroad.Network.Messaging.Protocol {
     /// <summary>
     ///     Implements a Silkroad Server messaging protocol.
     /// </summary>
@@ -9,21 +7,21 @@ namespace Silkroad.Network.Messaging.Protocol {
             this.State = MessageProtocolState.None;
             this.Option = MessageProtocolOption.Default;
         }
-        
+
         protected override void Validate(Message msg) {
             if (!this.Option.HasFlag(MessageProtocolOption.Checksum)) {
                 return;
             }
 
             if (msg.Sequence != this.Sequence.Next()) {
-                throw new InvalidOperationException();
+                throw new InvalidMessageException(InvalidMessageReason.InvalidSequence);
             }
 
             var msgCrc = msg.CRC;
             msg.CRC = 0;
 
             if (msgCrc != this.Crc.Compute(msg.AsSpan())) {
-                throw new InvalidOperationException();
+                throw new InvalidMessageException(InvalidMessageReason.InvalidCRC);
             }
         }
 

@@ -225,13 +225,11 @@ namespace Silkroad.Network {
         }
 
         /// <summary>
-        ///     Receives a complete <see cref="Message" /> from a connected session. This method would
-        ///     close the session if a protocol error acquired returning <c>null</c>.
+        ///     Receives a complete <see cref="Message" /> from a connected session. This method would not
+        ///     close the session if a protocol error acquired, instead it leaves it up to you to catch it
+        ///     and handle it the way you like by disconnecting or whatever.
         /// </summary>
-        /// <returns>
-        ///     The received <see cref="Message" />, could be <c>null</c> if the session
-        ///     was closed by the connected pair, or if any protocol error acquired.
-        /// </returns>
+        /// <returns>The received message.</returns>
         public async Task<Message> ReceiveAsync() {
             Message massiveMsg = null;
             ushort massiveCount = 0;
@@ -242,9 +240,6 @@ namespace Silkroad.Network {
             while (true) {
                 var sizeBuffer = new byte[2]; // 2 = Unsafe.SizeOf<MessageSize>()
                 await this.ReceiveExactAsync(sizeBuffer.AsMemory(), SocketFlags.None).ConfigureAwait(false);
-                if (!this._socket.Connected) {
-                    return null;
-                }
 
                 var size = MemoryMarshal.Read<MessageSize>(sizeBuffer);
                 var remaining = size.Encrypted && this.Protocol.Option.HasFlag(MessageProtocolOption.Encryption)
@@ -253,51 +248,38 @@ namespace Silkroad.Network {
 
                 var buffer = new byte[remaining];
                 await this.ReceiveExactAsync(buffer.AsMemory(), SocketFlags.None).ConfigureAwait(false);
-                if (!this._socket.Connected) {
-                    return null;
-                }
 
-                try {
-                    var msg = this.Protocol.Decode(size, buffer.AsSpan());
+                var msg = this.Protocol.Decode(size, buffer.AsSpan());
 
-                    if (msg.ID.Value == Opcodes.MASSIVE) {
-                        var isHeader = msg.Read<bool>();
+                if (msg.ID.Value == Opcodes.MASSIVE) {
+                    var isHeader = msg.Read<bool>();
 
-                        if (isHeader) {
-                            if (massiveMsg != null) {
-                                // "A malformed MASSIVE message was received."
-                                await this.DisconnectAsync().ConfigureAwait(false);
-                                return null;
-                            }
-
-                            massiveCount = msg.Read<ushort>();
-                            var opcode = msg.Read<ushort>();
-
-                            massiveMsg = new Message(opcode, false, true);
-                        } else {
-                            if (massiveMsg == null) {
-                                // "A malformed MASSIVE message was received."
-                                await this.DisconnectAsync().ConfigureAwait(false);
-                                return null;
-                            }
-
-                            massiveMsg.Write<byte>(msg.AsDataSpan().Slice(1));
-                            massiveCount--;
-
-                            if (massiveCount == 0) {
-                                // Return the message in a ready-to-use status.
-                                massiveMsg.Position = Message.DataOffset;
-
-                                return massiveMsg;
-                            }
+                    if (isHeader) {
+                        if (massiveMsg != null) {
+                            throw new InvalidMessageException(InvalidMessageReason.Distorted);
                         }
+
+                        massiveCount = msg.Read<ushort>();
+                        var opcode = msg.Read<ushort>();
+
+                        massiveMsg = new Message(opcode, false, true);
                     } else {
-                        return msg;
+                        if (massiveMsg == null) {
+                            throw new InvalidMessageException(InvalidMessageReason.Distorted);
+                        }
+
+                        massiveMsg.Write<byte>(msg.AsDataSpan().Slice(1));
+                        massiveCount--;
+
+                        if (massiveCount == 0) {
+                            // Return the message in a ready-to-use status.
+                            massiveMsg.Position = Message.DataOffset;
+
+                            return massiveMsg;
+                        }
                     }
-                } catch {
-                    // "received message cannot be decoded."
-                    await this.DisconnectAsync().ConfigureAwait(false);
-                    return null;
+                } else {
+                    return msg;
                 }
             }
         }
@@ -316,10 +298,9 @@ namespace Silkroad.Network {
                 var receivedChunk = await this._socket.ReceiveAsync(buffer.Slice(received), flags)
                     .ConfigureAwait(false);
 
-                if (receivedChunk <= 0) {
-                    // "you have been disconnected"
+                if (receivedChunk == 0) {
                     await this.DisconnectAsync().ConfigureAwait(false);
-                    return;
+                    throw new RemoteDisconnectedException();
                 }
 
                 received += receivedChunk;
@@ -327,9 +308,9 @@ namespace Silkroad.Network {
         }
 
         /// <summary>
-        ///     Responds to a <see cref="Message" /> by invoking all the registered services.
-        ///     This method would close the session if any service throw an exception.
-        ///     This method would return without doing anything if the passed message is <c>null</c>.
+        ///     Responds to a <see cref="Message" /> by invoking all the registered services and handlers,
+        ///     doing nothing if the passed message is <c>null</c>.
+        ///     You should catch any exceptions threw by any service or handler.
         /// </summary>
         /// <param name="msg">The message to respond to.</param>
         /// <returns></returns>
@@ -346,8 +327,8 @@ namespace Silkroad.Network {
         }
 
         /// <summary>
-        ///     Completes the Handshake process, after calling this method <see cref="Ready" /> should
-        ///     return trues, if the session is not closed somehow.
+        ///     Completes the Handshake process, after calling this method, <see cref="Ready" /> should
+        ///     return true, if the session is not closed somehow.
         /// </summary>
         /// <returns></returns>
         public async Task HandshakeAsync() {
@@ -356,38 +337,23 @@ namespace Silkroad.Network {
                 await server.Begin(this).ConfigureAwait(false);
             }
 
-            // Duplicated in RunAsync()
             while (!this.Ready) {
                 var msg = await this.ReceiveAsync().ConfigureAwait(false);
-                // We can't pass a null to RespondAsync() as it would return.
-                // and this would keep the loop running even when the session is closed.
-                // which is not what we want of course.
-                if (msg == null) {
-                    break;
-                }
-
                 await this.RespondAsync(msg).ConfigureAwait(false);
             }
         }
 
         /// <summary>
         ///     Runs the session until it's closed somehow. This behavior is accomplished by continue
-        ///     receiving via <see cref="ReceiveAsync" /> and responding with <see cref="RespondAsync" />.
+        ///     receiving via <see cref="ReceiveAsync" /> and responding with <see cref="RespondAsync" />
+        ///     after completing the handshake process via <see cref="HandshakeAsync" />.
         /// </summary>
         /// <returns></returns>
         public async Task RunAsync() {
-            // Just want to ensure that the handshake is done.
             await this.HandshakeAsync().ConfigureAwait(false);
 
             while (true) {
                 var msg = await this.ReceiveAsync().ConfigureAwait(false);
-                // We can't pass a null to RespondAsync() as it would return.
-                // and this would keep the loop running even when the session is closed.
-                // which is not what we want of course.
-                if (msg == null) {
-                    break;
-                }
-
                 await this.RespondAsync(msg).ConfigureAwait(false);
             }
         }

@@ -18,7 +18,7 @@ namespace Silkroad.Network.Messaging.Handshake {
         public async Task Begin(Session session) {
             var protocol = session.Protocol;
             if (protocol.State != MessageProtocolState.None) {
-                throw new InvalidOperationException();
+                throw new DistortedHandshakeException();
             }
 
             var msg = new Message(Opcodes.HANDSHAKE, 25);
@@ -71,7 +71,7 @@ namespace Silkroad.Network.Messaging.Handshake {
         public Task Handshake(Session session, Message msg) {
             var protocol = session.Protocol;
             if (protocol.State != MessageProtocolState.WaitChallenge) {
-                throw new InvalidOperationException();
+                throw new DistortedHandshakeException();
             }
 
             var remotePublic = msg.Read<uint>();
@@ -90,7 +90,7 @@ namespace Silkroad.Network.Messaging.Handshake {
             HandshakeHelpers.KeyTransformValue(expected, commonSecret, (byte) (remotePublic & 7));
 
             if (remoteChallenge != expected) {
-                throw new InvalidOperationException();
+                throw new InvalidHandshakeException();
             }
 
             var challenge = HandshakeHelpers.GetKey(this._localPublic, remotePublic).AsSpan();
@@ -112,7 +112,7 @@ namespace Silkroad.Network.Messaging.Handshake {
         public Task HandshakeAccept(Session session, Message msg) {
             var protocol = session.Protocol;
             if (protocol.State != MessageProtocolState.WaitAccept) {
-                throw new InvalidOperationException();
+                throw new DistortedHandshakeException();
             }
 
             protocol.State = MessageProtocolState.Completed;
