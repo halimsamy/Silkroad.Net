@@ -234,10 +234,12 @@ namespace Silkroad.Network {
         /// </returns>
         public async Task<Message> ReceiveAsync() {
             Message massiveMsg = null;
-            ushort massiveCnt = 0;
+            ushort massiveCount = 0;
 
+            // The loop was meant for receiving a complete MASSIVE message
+            // instead of calling the method recursively on itself.
+            // because doing so is a bad idea, and performance killer. (Ask Google if you don't know why)
             while (true) {
-                // for receiving a complete MASSIVE message.
                 var sizeBuffer = new byte[2]; // 2 = Unsafe.SizeOf<MessageSize>()
                 await this.ReceiveExactAsync(sizeBuffer.AsMemory(), SocketFlags.None).ConfigureAwait(false);
                 if (!this._socket.Connected) {
@@ -260,20 +262,34 @@ namespace Silkroad.Network {
 
                     if (msg.ID.Value == Opcodes.MASSIVE) {
                         var isHeader = msg.Read<bool>();
-                        if (isHeader && massiveMsg == null && massiveCnt == 0) {
-                            massiveCnt = msg.Read<ushort>();
-                            massiveMsg = new Message(msg.Read<ushort>(), false, true);
-                        } else if (!isHeader && massiveMsg != null && massiveCnt != 0) {
-                            massiveCnt--;
-                            massiveMsg.Write<byte>(msg.AsDataSpan().Slice(1));
-                        } else {
-                            // "corrupted massive message"
-                            await this.DisconnectAsync().ConfigureAwait(false);
-                            return null;
-                        }
 
-                        if (massiveCnt == 0) {
-                            return massiveMsg;
+                        if (isHeader) {
+                            if (massiveMsg != null) {
+                                // "A malformed MASSIVE message was received."
+                                await this.DisconnectAsync().ConfigureAwait(false);
+                                return null;
+                            }
+
+                            massiveCount = msg.Read<ushort>();
+                            var opcode = msg.Read<ushort>();
+
+                            massiveMsg = new Message(opcode, false, true);
+                        } else {
+                            if (massiveMsg == null) {
+                                // "A malformed MASSIVE message was received."
+                                await this.DisconnectAsync().ConfigureAwait(false);
+                                return null;
+                            }
+
+                            massiveMsg.Write<byte>(msg.AsDataSpan().Slice(1));
+                            massiveCount--;
+
+                            if (massiveCount == 0) {
+                                // Return the message in a ready-to-use status.
+                                massiveMsg.Position = Message.DataOffset;
+
+                                return massiveMsg;
+                            }
                         }
                     } else {
                         return msg;
