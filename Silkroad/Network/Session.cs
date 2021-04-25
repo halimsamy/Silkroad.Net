@@ -251,7 +251,7 @@ namespace Silkroad.Network {
 
                 var msg = this.Protocol.Decode(size, buffer.AsSpan());
 
-                if (msg.ID.Value == MessageID.MASSIVE) {
+                if (msg.ID.Equals(MessageID.MASSIVE)) {
                     var isHeader = msg.Read<bool>();
 
                     if (isHeader) {
@@ -319,8 +319,8 @@ namespace Silkroad.Network {
                 return;
             }
 
-            foreach (var (opcode, handler) in this._handlers) {
-                if (msg.ID.Value == opcode) {
+            foreach (var (id, handler) in this._handlers) {
+                if (msg.ID.Equals(id)) {
                     await handler.Invoke(this, msg).ConfigureAwait(false);
                 }
             }

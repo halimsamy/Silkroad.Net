@@ -8,7 +8,7 @@ namespace Silkroad.Network.Messaging {
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = sizeof(ushort))]
     // ReSharper disable once InconsistentNaming
-    public struct MessageID : IEquatable<MessageID> {
+    public struct MessageID : IEquatable<MessageID>, IEquatable<ushort> {
         /// <summary>
         ///     Initializes a MessageID with a full specific ID (a.k.a Opcode).
         /// </summary>
@@ -62,17 +62,20 @@ namespace Silkroad.Network.Messaging {
             set => this.Value = (ushort) ((this.Value & ~OperationMask) | ((value << OperationOffset) & OperationMask));
         }
 
+        public override bool Equals(object obj) {
+            return obj is MessageID other && this.Equals(other);
+        }
 
         public bool Equals(MessageID other) {
             return this.Value == other.Value;
         }
 
-        public override string ToString() {
-            return $"[{this.Value:X4}] [{this.Direction}] [{this.Type}] [{this.Operation:X4}]";
+        public bool Equals(ushort other) {
+            return this.Value == other;
         }
 
-        public override bool Equals(object obj) {
-            return obj is MessageID other && this.Equals(other);
+        public override string ToString() {
+            return $"[{this.Value:X4}] [{this.Direction}] [{this.Type}] [{this.Operation:X4}]";
         }
 
         public override int GetHashCode() {
