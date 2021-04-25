@@ -89,7 +89,7 @@ namespace Silkroad.Network.Messaging.Handshake {
             var expected = HandshakeHelpers.GetKey(remotePublic, this._localPublic).AsSpan();
             HandshakeHelpers.KeyTransformValue(expected, commonSecret, (byte) (remotePublic & 7));
 
-            if (remoteChallenge != expected) {
+            if (!remoteChallenge.SequenceEqual(expected)) {
                 throw new InvalidHandshakeException();
             }
 

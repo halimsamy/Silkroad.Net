@@ -100,7 +100,7 @@ namespace Silkroad.Network.Messaging.Handshake {
             HandshakeHelpers.KeyTransformValue(expected, this._commonSecret, (byte) (this._localPublic & 7));
             protocol.Blowfish.Encrypt(expected);
 
-            if (remoteChallenge == expected) {
+            if (!remoteChallenge.SequenceEqual(expected)) {
                 throw new InvalidHandshakeException();
             }
 
