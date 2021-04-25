@@ -21,7 +21,7 @@ namespace Silkroad.Network.Messaging.Handshake {
                 throw new DistortedHandshakeException();
             }
 
-            var msg = new Message(Opcodes.HANDSHAKE, 25);
+            var msg = new Message(MessageID.HANDSHAKE, 25);
             msg.Write(protocol.Option);
 
             if (protocol.Option.HasFlag(MessageProtocolOption.Encryption)) {
@@ -67,7 +67,7 @@ namespace Silkroad.Network.Messaging.Handshake {
             await session.SendAsync(msg);
         }
 
-        [MessageHandler(Opcodes.HANDSHAKE)]
+        [MessageHandler(MessageID.HANDSHAKE)]
         public Task Handshake(Session session, Message msg) {
             var protocol = session.Protocol;
             if (protocol.State != MessageProtocolState.WaitChallenge) {
@@ -100,7 +100,7 @@ namespace Silkroad.Network.Messaging.Handshake {
             HandshakeHelpers.KeyTransformValue(this._key.AsSpan(), commonSecret, 3);
             protocol.Blowfish = new Blowfish(this._key.AsSpan());
 
-            var res = new Message(Opcodes.HANDSHAKE, 9);
+            var res = new Message(MessageID.HANDSHAKE, 9);
             res.Write(MessageProtocolOption.KeyChallenge);
             res.Write<byte>(challenge);
             protocol.State = MessageProtocolState.WaitAccept;
@@ -108,7 +108,7 @@ namespace Silkroad.Network.Messaging.Handshake {
             return session.SendAsync(res);
         }
 
-        [MessageHandler(Opcodes.HANDSHAKE_ACCEPT)]
+        [MessageHandler(MessageID.HANDSHAKE_ACCEPT)]
         public Task HandshakeAccept(Session session, Message msg) {
             var protocol = session.Protocol;
             if (protocol.State != MessageProtocolState.WaitAccept) {

@@ -14,7 +14,7 @@ namespace Silkroad.Network.Messaging.Handshake {
         private uint _localPublic;
         private uint _remotePublic;
 
-        [MessageHandler(Opcodes.HANDSHAKE)]
+        [MessageHandler(MessageID.HANDSHAKE)]
         public Task Handshake(Session session, Message msg) {
             var protocol = session.Protocol;
 
@@ -51,7 +51,7 @@ namespace Silkroad.Network.Messaging.Handshake {
             return Task.CompletedTask;
         }
 
-        [MessageHandler(Opcodes.HANDSHAKE_ACCEPT)]
+        [MessageHandler(MessageID.HANDSHAKE_ACCEPT)]
         public Task HandshakeAccept(Session session, Message msg) {
             throw new DistortedHandshakeException();
         }
@@ -79,7 +79,7 @@ namespace Silkroad.Network.Messaging.Handshake {
             HandshakeHelpers.KeyTransformValue(localChallenge, this._commonSecret, (byte) (this._remotePublic & 7));
             protocol.Blowfish.Encrypt(localChallenge);
 
-            var res = new Message(Opcodes.HANDSHAKE, sizeof(uint) + sizeof(ulong));
+            var res = new Message(MessageID.HANDSHAKE, sizeof(uint) + sizeof(ulong));
             res.Write(this._remotePublic);
             res.Write<byte>(localChallenge);
 
@@ -108,7 +108,7 @@ namespace Silkroad.Network.Messaging.Handshake {
             protocol.Blowfish = new Blowfish(this._key.AsSpan());
 
             protocol.State = MessageProtocolState.Completed;
-            return new Message(Opcodes.HANDSHAKE_ACCEPT);
+            return new Message(MessageID.HANDSHAKE_ACCEPT);
         }
     }
 }

@@ -43,23 +43,23 @@ namespace Silkroad.Network.Messaging {
         /// <summary>
         ///     Initializes a new Message.
         /// </summary>
-        /// <param name="opcode">The message unique ID (a.k.a Opcode).</param>
+        /// <param name="id">The message unique ID (a.k.a Opcode).</param>
         /// <param name="encrypted">Indicates whether the message is encrypted.</param>
         /// <param name="massive">Indicates whether the message should be warped into MASSIVE message.</param>
         /// <param name="capacity">The pre-allocated capacity.</param>
         /// <exception cref="NotImplementedException">A message cannot be both encrypted and massive.</exception>
-        public Message(ushort opcode, bool encrypted, bool massive = false, ushort capacity = 0)
-            : this(new MessageID(opcode), encrypted, massive, capacity) {
+        public Message(ushort id, bool encrypted, bool massive = false, ushort capacity = 0)
+            : this(new MessageID(id), encrypted, massive, capacity) {
         }
 
         /// <summary>
         ///     Initializes a new Message that is not encrypted nor massive.
         /// </summary>
-        /// <param name="opcode">The message unique ID (a.k.a Opcode).</param>
+        /// <param name="id">The message unique ID (a.k.a Opcode).</param>
         /// <param name="capacity">The pre-allocated capacity.</param>
         /// <exception cref="NotImplementedException">A message cannot be both encrypted and massive.</exception>
-        public Message(ushort opcode, ushort capacity = 0)
-            : this(new MessageID(opcode), false, false, capacity) {
+        public Message(ushort id, ushort capacity = 0)
+            : this(new MessageID(id), false, false, capacity) {
         }
 
         internal Message(MessageSize size, Span<byte> buffer) {
@@ -200,7 +200,8 @@ namespace Silkroad.Network.Messaging {
                     length += bytesPerLine - length % bytesPerLine;
                 }
 
-                output.Append($"{this.ID} [{this.Size:D4} bytes]{(this.Encrypted ? " [Encrypted]" : "")}{(this.Massive ? " [Massive]" : "")} {Environment.NewLine}");
+                output.Append(
+                    $"{this.ID} [{this.Size:D4} bytes]{(this.Encrypted ? " [Encrypted]" : "")}{(this.Massive ? " [Massive]" : "")} {Environment.NewLine}");
                 for (var x = 0; x <= length; ++x) {
                     if (x % bytesPerLine == 0) {
                         if (x > 0) {

@@ -6,10 +6,10 @@ namespace Silkroad.Network.Messaging {
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class MessageHandlerAttribute : Attribute {
-        public readonly ushort Opcode;
+        public readonly ushort ID;
 
-        public MessageHandlerAttribute(ushort opcode) {
-            this.Opcode = opcode;
+        public MessageHandlerAttribute(ushort id) {
+            this.ID = id;
         }
     }
 }

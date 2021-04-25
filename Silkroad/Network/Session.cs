@@ -107,7 +107,7 @@ namespace Silkroad.Network {
                 where attr != null
                 select (method, attr)) {
                 var hnd = (MessageHandler) Delegate.CreateDelegate(typeof(MessageHandler), service, method);
-                this._handlers.Add(Tuple.Create(attr.Opcode, hnd));
+                this._handlers.Add(Tuple.Create(attr.ID, hnd));
             }
         }
 
@@ -166,7 +166,7 @@ namespace Silkroad.Network {
                 return;
             }
 
-            this._handlers.Add(Tuple.Create(attr.Opcode, handler));
+            this._handlers.Add(Tuple.Create(attr.ID, handler));
         }
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace Silkroad.Network {
                 var size = msg.Size;
                 var chunks = (ushort) Math.Ceiling(size / (float) Message.BufferSize);
 
-                var header = new Message(Opcodes.MASSIVE, 5);
+                var header = new Message(MessageID.MASSIVE, 5);
                 header.Write(true);
                 header.Write(chunks);
                 header.Write(msg.ID.Value);
@@ -203,7 +203,7 @@ namespace Silkroad.Network {
                 for (var i = 0; i < chunks; i++) {
                     var len = Math.Min(Message.BufferSize, size);
 
-                    var chunk = new Message(Opcodes.MASSIVE, (ushort) (len + 1));
+                    var chunk = new Message(MessageID.MASSIVE, (ushort) (len + 1));
                     chunk.Write(false);
                     chunk.Write<byte>(msg.AsDataSpan().Slice(i * Message.BufferSize, len));
                     await this._socket.SendAsync(this.Protocol.Encode(header), SocketFlags.None).ConfigureAwait(false);
@@ -251,7 +251,7 @@ namespace Silkroad.Network {
 
                 var msg = this.Protocol.Decode(size, buffer.AsSpan());
 
-                if (msg.ID.Value == Opcodes.MASSIVE) {
+                if (msg.ID.Value == MessageID.MASSIVE) {
                     var isHeader = msg.Read<bool>();
 
                     if (isHeader) {
