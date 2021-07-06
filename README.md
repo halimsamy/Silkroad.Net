@@ -41,7 +41,7 @@ private static async Task Main(string[] args) {
 // A not-ready-to-use service, missing a lot of implementations,
 // However, this is just a demo to show up how to use services.
 private class MyClientlessService {
-    [MessageHandler(Opcodes.HANDSHAKE)]
+    [MessageHandler(MessageID.HANDSHAKE)]
     public Task HandshakeDone(Session session, Message msg) {
         // The handshake has to be completed first,
         // as the client receives 2 HANDSHAKE messages. 
@@ -50,7 +50,7 @@ private class MyClientlessService {
         }
 
         // Prepare the response.
-        var identity = new Message(Opcodes.IDENTITY, true);
+        var identity = new Message(MessageID.IDENTITY, true);
         identity.Write("SR_Client");
         identity.Write<byte>(0);
 
@@ -59,7 +59,7 @@ private class MyClientlessService {
         return session.SendAsync(identity);
     }
 
-    [MessageHandler(Opcodes.IDENTITY)]
+    [MessageHandler(MessageID.IDENTITY)]
     public Task Identity(Session session, Message msg) {
         return Task.CompletedTask;
     }
