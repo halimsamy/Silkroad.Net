@@ -1,9 +1,9 @@
 ﻿// ReSharper disable InconsistentNaming
 namespace Silkroad {
     /// <summary>
-    /// Specifies what local was this version of Silkroad released for. Taken from Silkroad CertServer.
+    /// Specifies what locale was this version of Silkroad released for. Taken from Silkroad CertServer.
     /// </summary>
-    public enum Local: byte {
+    public enum Locale: byte {
         Silkroad_Dev = 1,
         Silkroad_Korea_Yahoo_Official = 2,
         Silkroad_Korea_Yahoo_Test_IN = 3,
