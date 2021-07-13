@@ -6,7 +6,7 @@ An unofficial .NET API wrapper for [Silkroad Online]. This was written to allow 
 ## vs SilkroadSecurityAPI
 A compression against SilkroadSecurityAPI created by [pushedx].
 
-* Clean code, and powered by .NET Core 3 (requires at least C# 7.0).
+* Clean code, and powered by .NET 5.0 (requires at least C# 7.0).
 * Up to 2~3x faster. (do the benchmarking yourself!)
 * Less memory usage. (measure yourself!)
 * Using Task-based Asynchronous Pattern (async/await) in favor of Asynchronous Programming Model (APM).
