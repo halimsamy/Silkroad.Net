@@ -57,7 +57,7 @@ namespace Silkroad.Network.Messaging.Protocol {
         /// <exception cref="InvalidOperationException">The message was interrupted or injected (checksum failed).</exception>
         internal Message Decode(MessageSize size, Span<byte> buffer) {
             if (size.Encrypted && this.Option.HasFlag(MessageProtocolOption.Encryption)) {
-                this.Blowfish.Decrypt(buffer.Slice(Message.EncryptOffset));
+                this.Blowfish.Decrypt(buffer);
             }
 
             var msg = new Message(size, buffer);
