@@ -6,16 +6,15 @@ An unofficial .NET API wrapper for [Silkroad Online]. This was written to allow 
 ## vs SilkroadSecurityAPI
 A compression against SilkroadSecurityAPI created by [pushedx].
 
-* Clean code, and powered by .NET 5.0 (requires at least C# 7.0).
-* Up to 2~3x faster. (do the benchmarking yourself!)
-* Less memory usage. (measure yourself!)
+* Clean code, and powered by .NET 6.0
+* Up to 2~3x faster.
+* Less memory usage.
 * Using Task-based Asynchronous Pattern (async/await) in favor of Asynchronous Programming Model (APM).
 * More abstract with reusable components called services. (check the examples)
 
 ## Examples
 Connecting to Silkroad's official server. 
 ```c#
-// async Main requires C# 7.0+
 private static async Task Main(string[] args) {
     var session = new Session();
     session.RegisterService<MyClientlessService>();

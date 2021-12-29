@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace Silkroad.Network.Messaging {
     /// <summary>
@@ -62,7 +61,7 @@ namespace Silkroad.Network.Messaging {
             set => this.Value = (ushort) ((this.Value & ~OperationMask) | ((value << OperationOffset) & OperationMask));
         }
 
-        public override bool Equals(object obj) {
+        public override bool Equals(object? obj) {
             return obj is MessageID other && this.Equals(other);
         }
 

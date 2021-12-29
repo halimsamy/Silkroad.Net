@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Silkroad.Network.Messaging {
+﻿namespace Silkroad.Network.Messaging {
     /// <summary>
     ///     A <see cref="Message" /> service endpoint.
     /// </summary>

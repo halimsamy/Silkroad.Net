@@ -179,7 +179,7 @@ namespace Silkroad {
                 *************************
             */
             var regionGap = Math.Abs(r1 - r2);
-            return (regionGap >= RegionScale - 1 && regionGap <= RegionScale + 1) || regionGap == 1 || regionGap == 0;
+            return regionGap is >= RegionScale - 1 and <= RegionScale + 1 or 1 or 0;
         }
 
         public static float Angle(float y1, float y2, float x1, float x2)

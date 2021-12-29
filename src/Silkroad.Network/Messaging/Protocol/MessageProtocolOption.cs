@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Silkroad.Network.Messaging.Protocol {
+﻿namespace Silkroad.Network.Messaging.Protocol {
     /// <summary>
     ///     Determinate what options are enabled in the protocol.
     /// </summary>

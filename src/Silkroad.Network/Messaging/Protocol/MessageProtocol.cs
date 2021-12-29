@@ -1,5 +1,4 @@
-﻿using System;
-using Silkroad.Cryptography;
+﻿using Silkroad.Cryptography;
 
 namespace Silkroad.Network.Messaging.Protocol {
     /// <summary>
@@ -9,22 +8,22 @@ namespace Silkroad.Network.Messaging.Protocol {
         /// <summary>
         ///     The Blowfish used for encryption.
         /// </summary>
-        internal Blowfish Blowfish;
+        internal Blowfish Blowfish = null!;
 
         /// <summary>
-        ///     The CRC used for computing checksums.
+        ///     The CRC used for computing checksum.
         /// </summary>
-        internal MessageCRC Crc;
+        internal MessageCRC Crc = null!;
+
+        /// <summary>
+        ///     The Sequence used for sequencing the messages.
+        /// </summary>
+        internal MessageSequence Sequence = null!;
 
         /// <summary>
         ///     The protocol option.
         /// </summary>
         internal MessageProtocolOption Option;
-
-        /// <summary>
-        ///     The Sequence used for sequencing the messages.
-        /// </summary>
-        internal MessageSequence Sequence;
 
         /// <summary>
         ///     The protocol state.
@@ -76,7 +75,7 @@ namespace Silkroad.Network.Messaging.Protocol {
 
             if (msg.Encrypted && this.Option.HasFlag(MessageProtocolOption.Encryption)) {
                 msg.Resize((ushort) (Message.EncryptOffset + Blowfish.GetOutputLength(Message.EncryptSize + msg.Size)));
-                this.Blowfish.Encrypt(msg.AsSpan().Slice(Message.EncryptOffset));
+                this.Blowfish.Encrypt(msg.AsSpan()[Message.EncryptOffset..]);
             }
 
             return msg.AsMemory();

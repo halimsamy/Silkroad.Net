@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace Silkroad.Network.Messaging.Handshake {
+﻿namespace Silkroad.Network.Messaging.Handshake {
     /// <summary>
     ///     Implement some helpers for the Handshake process.
     /// </summary>

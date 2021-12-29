@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Silkroad.Cryptography {
@@ -151,16 +150,8 @@ namespace Silkroad.Cryptography {
             }
         };
 
-        private uint[] _pArray;
-        private uint[,] _sBoxes;
-
-        /// <summary>
-        ///     Initializes a Blowfish without a kay. Not recommenced to use.
-        /// </summary>
-        public Blowfish() {
-            this._pArray = new uint[18];
-            this._sBoxes = new uint[4, 256];
-        }
+        private readonly uint[] _pArray;
+        private readonly uint[,] _sBoxes;
 
         /// <summary>
         ///     Initializes a Blowfish with a specific key.
@@ -209,7 +200,7 @@ namespace Silkroad.Cryptography {
         public Span<byte> Encrypt(ReadOnlySpan<byte> input) {
             var output = new byte[GetOutputLength(input.Length)].AsSpan();
             input.CopyTo(output);
-            output.Slice(input.Length).Fill(0);
+            output[input.Length..].Fill(0);
 
             this.Encrypt(output);
 
@@ -270,8 +261,8 @@ namespace Silkroad.Cryptography {
             }
 
             for (var i = 0; i < input.Length; i += 8) {
-                ref var left = ref MemoryMarshal.AsRef<uint>(input.Slice(i));
-                ref var right = ref MemoryMarshal.AsRef<uint>(input.Slice(i + 4));
+                ref var left = ref MemoryMarshal.AsRef<uint>(input[i..]);
+                ref var right = ref MemoryMarshal.AsRef<uint>(input[(i + 4)..]);
                 this.Decrypt(ref left, ref right);
             }
         }
@@ -294,10 +285,7 @@ namespace Silkroad.Cryptography {
             left ^= this._pArray[16];
             right ^= this._pArray[17];
 
-            // Swap(ref left, ref right);
-            var temp = right;
-            right = left;
-            left = temp;
+            (right, left) = (left, right);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -312,10 +300,7 @@ namespace Silkroad.Cryptography {
             left ^= this._pArray[1];
             right ^= this._pArray[0];
 
-            // Swap(ref left, ref right);
-            var temp = right;
-            right = left;
-            left = temp;
+            (right, left) = (left, right);
         }
         
         /// <summary>

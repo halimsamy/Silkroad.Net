@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -102,7 +101,7 @@ namespace Silkroad.Network.Messaging {
                     return size.Encrypted;
                 }
             }
-            private set {
+            private init {
                 lock (this._buffer) {
                     ref var size =
                         ref MemoryMarshal.AsRef<MessageSize>(this._buffer.AsSpan(SizeOffset,
@@ -205,20 +204,20 @@ namespace Silkroad.Network.Messaging {
                 for (var x = 0; x <= length; ++x) {
                     if (x % bytesPerLine == 0) {
                         if (x > 0) {
-                            output.AppendFormat("  {0}{1}", asciiOutput, Environment.NewLine);
+                            output.Append($"  {asciiOutput}{Environment.NewLine}");
                             asciiOutput.Clear();
                         }
 
                         if (x != length) {
-                            output.AppendFormat("{0:d10}   ", x);
+                            output.Append($"{x:d10}   ");
                         }
                     }
 
                     if (x < this._buffer.Length - HeaderSize) {
-                        output.AppendFormat("{0:X2} ", this._buffer[x + HeaderSize]);
+                        output.Append($"{this._buffer[x + HeaderSize]:X2} ");
                         var ch = (char) this._buffer[x + HeaderSize];
                         if (!char.IsControl(ch)) {
-                            asciiOutput.AppendFormat("{0}", ch);
+                            asciiOutput.Append($"{ch}");
                         } else {
                             asciiOutput.Append(".");
                         }
@@ -378,7 +377,7 @@ namespace Silkroad.Network.Messaging {
                 var bytes = encoding.GetBytes(value);
                 var length = (ushort) bytes.Length;
                 this.Write(ref length);
-                this.Write<byte>(bytes.AsSpan());
+                this.Write<byte>(bytes);
             }
         }
 

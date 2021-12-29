@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace Silkroad.Network.Messaging {
     /// <summary>
@@ -37,7 +36,7 @@ namespace Silkroad.Network.Messaging {
             return $"[{this.DataSize} bytes] {(this.Encrypted ? "[Encrypted]" : "")}";
         }
 
-        public override bool Equals(object obj) {
+        public override bool Equals(object? obj) {
             return obj is MessageSize other && this.Equals(other);
         }
 

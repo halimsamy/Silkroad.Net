@@ -34,7 +34,7 @@
             var mut1 = GenerateValue(ref mut0);
             var mut2 = GenerateValue(ref mut0);
             var mut3 = GenerateValue(ref mut0);
-            var mut4 = GenerateValue(ref mut0);
+            GenerateValue(ref mut0);
 
             this._byte1 = (byte) ((mut1 & byte.MaxValue) ^ (mut2 & byte.MaxValue));
             if (this._byte1 == 0) {

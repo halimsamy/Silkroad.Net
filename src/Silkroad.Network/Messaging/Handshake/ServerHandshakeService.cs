@@ -1,6 +1,4 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
+﻿using System.Security.Cryptography;
 using Silkroad.Network.Messaging.Protocol;
 using Silkroad.Cryptography;
 

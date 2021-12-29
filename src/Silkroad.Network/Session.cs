@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using Silkroad.Network.Messaging;
 using Silkroad.Network.Messaging.Handshake;
 using Silkroad.Network.Messaging.Protocol;
@@ -20,12 +16,12 @@ namespace Silkroad.Network {
         /// <summary>
         ///     A list of registered handlers.
         /// </summary>
-        private readonly List<Tuple<ushort, MessageHandler>> _handlers = new List<Tuple<ushort, MessageHandler>>();
+        private readonly List<Tuple<ushort, MessageHandler>> _handlers = new();
 
         /// <summary>
         ///     A list of registered services.
         /// </summary>
-        private readonly List<object> _services = new List<object>();
+        private readonly List<object> _services = new();
 
         /// <summary>
         ///     The underlying socket.
@@ -75,7 +71,7 @@ namespace Silkroad.Network {
         private void Dispose(bool disposing) {
             this.ReleaseUnmanagedResources();
             if (disposing) {
-                this._socket?.Dispose();
+                this._socket.Dispose();
             }
         }
 
@@ -147,8 +143,8 @@ namespace Silkroad.Network {
         /// </summary>
         /// <typeparam name="T">The service type.</typeparam>
         /// <returns>The requested service, or <c>null</c> if it's registered.</returns>
-        public T FindService<T>() where T : class {
-            return (T) this._services.FirstOrDefault(s => s.GetType() == typeof(T));
+        public T? FindService<T>() where T : class {
+            return (T?) this._services.FirstOrDefault(s => s.GetType() == typeof(T));
         }
 
         /// <summary>
@@ -161,7 +157,7 @@ namespace Silkroad.Network {
                 return;
             }
 
-            var attr = handler.GetMethodInfo()?.GetCustomAttribute<MessageHandlerAttribute>();
+            var attr = handler.GetMethodInfo().GetCustomAttribute<MessageHandlerAttribute>();
             if (attr == null) {
                 return;
             }
@@ -231,7 +227,7 @@ namespace Silkroad.Network {
         /// </summary>
         /// <returns>The received message.</returns>
         public async Task<Message> ReceiveAsync() {
-            Message massiveMsg = null;
+            Message? massiveMsg = null;
             ushort massiveCount = 0;
 
             // The loop was meant for receiving a complete MASSIVE message
@@ -268,15 +264,15 @@ namespace Silkroad.Network {
                             throw new InvalidMessageException(InvalidMessageReason.Distorted);
                         }
 
-                        massiveMsg.Write<byte>(msg.AsDataSpan().Slice(1));
+                        massiveMsg.Write<byte>(msg.AsDataSpan()[1..]);
                         massiveCount--;
 
-                        if (massiveCount == 0) {
-                            // Return the message in a ready-to-use status.
-                            massiveMsg.Position = Message.DataOffset;
+                        if (massiveCount != 0) continue;
 
-                            return massiveMsg;
-                        }
+                        // Return the message in a ready-to-use status.
+                        massiveMsg.Position = Message.DataOffset;
+
+                        return massiveMsg;
                     }
                 } else {
                     return msg;
@@ -355,6 +351,8 @@ namespace Silkroad.Network {
             while (true) {
                 var msg = await this.ReceiveAsync().ConfigureAwait(false);
                 await this.RespondAsync(msg).ConfigureAwait(false);
+
+                // TODO: Add a cancellation token to exit this infinite loop.  
             }
         }
     }
