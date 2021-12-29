@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Silkroad.Cryptography\Silkroad.Cryptography.csproj" />
+      <ProjectReference Include="..\Silkroad.Network\Silkroad.Network.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,5 +1,5 @@
 ﻿using System;
-using Silkroad.Security;
+using Silkroad.Cryptography;
 
 namespace Silkroad.Network.Messaging.Protocol {
     /// <summary>

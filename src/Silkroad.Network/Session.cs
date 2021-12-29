@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Silkroad.Network.Messaging;
 using Silkroad.Network.Messaging.Handshake;
 using Silkroad.Network.Messaging.Protocol;
-using Silkroad.Security;
+using Silkroad.Cryptography;
 
 namespace Silkroad.Network {
     /// <summary>

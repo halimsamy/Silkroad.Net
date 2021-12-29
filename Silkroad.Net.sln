@@ -1,6 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silkroad", "Silkroad\Silkroad.csproj", "{629D9692-4913-484F-AA85-78A3328ADAE4}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silkroad", "src\Silkroad\Silkroad.csproj", "{629D9692-4913-484F-AA85-78A3328ADAE4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silkroad.Cryptography", "src\Silkroad.Cryptography\Silkroad.Cryptography.csproj", "{2B098EDE-2D2B-4B0D-BAB6-4682E248BA7D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silkroad.Network", "src\Silkroad.Network\Silkroad.Network.csproj", "{E970E589-7ABF-4E9A-A308-118DBD407BD1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +19,19 @@ Global
 		{629D9692-4913-484F-AA85-78A3328ADAE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{629D9692-4913-484F-AA85-78A3328ADAE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{629D9692-4913-484F-AA85-78A3328ADAE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B098EDE-2D2B-4B0D-BAB6-4682E248BA7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B098EDE-2D2B-4B0D-BAB6-4682E248BA7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B098EDE-2D2B-4B0D-BAB6-4682E248BA7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B098EDE-2D2B-4B0D-BAB6-4682E248BA7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E970E589-7ABF-4E9A-A308-118DBD407BD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E970E589-7ABF-4E9A-A308-118DBD407BD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E970E589-7ABF-4E9A-A308-118DBD407BD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E970E589-7ABF-4E9A-A308-118DBD407BD1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {806358D9-D6AB-44E4-B7F3-03A55119C3A4}
 	EndGlobalSection
 EndGlobal

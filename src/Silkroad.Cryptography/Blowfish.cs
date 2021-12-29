@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace Silkroad.Security {
+namespace Silkroad.Cryptography {
     /// <summary>
     ///     Implication of the Blowfish algorithm.
     /// </summary>
