@@ -328,6 +328,8 @@ namespace Silkroad.Network {
         /// </summary>
         /// <returns></returns>
         public async Task HandshakeAsync() {
+            if (this.Ready) return;
+
             var server = this.FindService<ServerHandshakeService>();
             if (server != null) {
                 await server.Begin(this).ConfigureAwait(false);
@@ -345,15 +347,23 @@ namespace Silkroad.Network {
         ///     after completing the handshake process via <see cref="HandshakeAsync" />.
         /// </summary>
         /// <returns></returns>
-        public async Task RunAsync() {
+        public async Task RunAsync(CancellationToken cancellationToken) {
             await this.HandshakeAsync().ConfigureAwait(false);
 
-            while (true) {
+            while (!cancellationToken.IsCancellationRequested && this.Connected) {
                 var msg = await this.ReceiveAsync().ConfigureAwait(false);
                 await this.RespondAsync(msg).ConfigureAwait(false);
-
-                // TODO: Add a cancellation token to exit this infinite loop.  
             }
+        }
+
+        /// <summary>
+        ///     Runs the session until it's closed somehow. This behavior is accomplished by continue
+        ///     receiving via <see cref="ReceiveAsync" /> and responding with <see cref="RespondAsync" />
+        ///     after completing the handshake process via <see cref="HandshakeAsync" />.
+        /// </summary>
+        /// <returns></returns>
+        public Task RunAsync() {
+            return this.RunAsync(default);
         }
     }
 }
