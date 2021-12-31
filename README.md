@@ -1,5 +1,5 @@
 ﻿# Silkroad.Net
-An unofficial .NET API wrapper for [Silkroad Online]. This was written to allow easier writing of bots, emulators and cheat guards.
+An unofficial .NET API wrapper for Silkroad Online. it allows easier writing of bots, emulators and cheat guards.
 
 [Silkroad Online]: https://www.silkroadonline.net/
 
