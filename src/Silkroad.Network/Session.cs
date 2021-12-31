@@ -21,7 +21,7 @@ namespace Silkroad.Network {
         /// <summary>
         ///     A list of registered services.
         /// </summary>
-        private readonly List<object> _services = new();
+        private readonly Dictionary<Type, object> _services = new();
 
         /// <summary>
         ///     The underlying socket.
@@ -95,7 +95,7 @@ namespace Silkroad.Network {
                 return;
             }
 
-            this._services.Add(service);
+            this._services.Add(typeof(T), service);
 
             foreach (var (method, attr) in from method in service.GetType()
                     .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
@@ -127,7 +127,7 @@ namespace Silkroad.Network {
                 return;
             }
 
-            this._services.Remove(service);
+            this._services.Remove(typeof(T));
 
             if (!removeHandlers) {
                 return;
@@ -144,7 +144,7 @@ namespace Silkroad.Network {
         /// <typeparam name="T">The service type.</typeparam>
         /// <returns>The requested service, or <c>null</c> if it's registered.</returns>
         public T? FindService<T>() where T : class {
-            return (T?) this._services.FirstOrDefault(s => s.GetType() == typeof(T));
+            return (T?) this._services.GetValueOrDefault(typeof(T));
         }
 
         /// <summary>
