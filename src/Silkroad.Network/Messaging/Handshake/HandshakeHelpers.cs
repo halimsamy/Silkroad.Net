@@ -1,44 +1,40 @@
-﻿namespace Silkroad.Network.Messaging.Handshake {
-    /// <summary>
-    ///     Implement some helpers for the Handshake process.
-    /// </summary>
-    public static class HandshakeHelpers {
-        public static uint PowMod(uint g, uint x, uint p) {
-            long r = 1;
-            long m = g;
+﻿namespace Silkroad.Network.Messaging.Handshake; 
 
-            if (x == 0) {
-                return 1;
-            }
+/// <summary>
+///     Implement some helpers for the Handshake process.
+/// </summary>
+public static class HandshakeHelpers {
+    public static uint PowMod(uint g, uint x, uint p) {
+        long r = 1;
+        long m = g;
 
-            while (x != 0) {
-                if ((x & 1) > 0) {
-                    r = m * r % p;
-                }
+        if (x == 0) return 1;
 
-                x >>= 1;
-                m = m * m % p;
-            }
+        while (x != 0) {
+            if ((x & 1) > 0) r = m * r % p;
 
-            return (uint) r;
+            x >>= 1;
+            m = m * m % p;
         }
 
-        public static void KeyTransformValue(Span<byte> value, uint key, byte keyByte) {
-            value[0] ^= (byte) (value[0] + ((key >> 00) & byte.MaxValue) + keyByte);
-            value[1] ^= (byte) (value[1] + ((key >> 08) & byte.MaxValue) + keyByte);
-            value[2] ^= (byte) (value[2] + ((key >> 16) & byte.MaxValue) + keyByte);
-            value[3] ^= (byte) (value[3] + ((key >> 24) & byte.MaxValue) + keyByte);
+        return (uint)r;
+    }
 
-            value[4] ^= (byte) (value[4] + ((key >> 00) & byte.MaxValue) + keyByte);
-            value[5] ^= (byte) (value[5] + ((key >> 08) & byte.MaxValue) + keyByte);
-            value[6] ^= (byte) (value[6] + ((key >> 16) & byte.MaxValue) + keyByte);
-            value[7] ^= (byte) (value[7] + ((key >> 24) & byte.MaxValue) + keyByte);
-        }
+    public static void KeyTransformValue(Span<byte> value, uint key, byte keyByte) {
+        value[0] ^= (byte)(value[0] + ((key >> 00) & byte.MaxValue) + keyByte);
+        value[1] ^= (byte)(value[1] + ((key >> 08) & byte.MaxValue) + keyByte);
+        value[2] ^= (byte)(value[2] + ((key >> 16) & byte.MaxValue) + keyByte);
+        value[3] ^= (byte)(value[3] + ((key >> 24) & byte.MaxValue) + keyByte);
 
-        public static byte[] GetKey(uint a, uint b) {
-            var x = ((ulong) b << 32) | a;
-            var bytes = BitConverter.GetBytes(x);
-            return BitConverter.IsLittleEndian ? bytes : bytes.Reverse().ToArray();
-        }
+        value[4] ^= (byte)(value[4] + ((key >> 00) & byte.MaxValue) + keyByte);
+        value[5] ^= (byte)(value[5] + ((key >> 08) & byte.MaxValue) + keyByte);
+        value[6] ^= (byte)(value[6] + ((key >> 16) & byte.MaxValue) + keyByte);
+        value[7] ^= (byte)(value[7] + ((key >> 24) & byte.MaxValue) + keyByte);
+    }
+
+    public static byte[] GetKey(uint a, uint b) {
+        var x = ((ulong)b << 32) | a;
+        var bytes = BitConverter.GetBytes(x);
+        return BitConverter.IsLittleEndian ? bytes : bytes.Reverse().ToArray();
     }
 }

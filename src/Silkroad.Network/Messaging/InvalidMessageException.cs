@@ -1,11 +1,11 @@
-﻿namespace Silkroad.Network.Messaging {
-    public class InvalidMessageException : Exception {
-        public readonly InvalidMessageReason Reason;
+﻿namespace Silkroad.Network.Messaging; 
 
-        public InvalidMessageException(InvalidMessageReason reason) {
-            this.Reason = reason;
-        }
+public class InvalidMessageException : Exception {
+    public readonly InvalidMessageReason Reason;
 
-        public override string Message => $"An invalid message was received: {this.Reason}.";
+    public InvalidMessageException(InvalidMessageReason reason) {
+        this.Reason = reason;
     }
+
+    public override string Message => $"An invalid message was received: {this.Reason}.";
 }
