@@ -1,6 +1,6 @@
 ﻿// ReSharper disable InconsistentNaming
 
-namespace Silkroad; 
+namespace Silkroad;
 
 /// <summary>
 ///     Specifies what locale was this version of Silkroad released for. Taken from Silkroad CertServer.

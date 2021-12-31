@@ -1,4 +1,4 @@
-﻿namespace Silkroad.Network.Messaging.Protocol; 
+﻿namespace Silkroad.Network.Messaging.Protocol;
 
 /// <summary>
 ///     Implements a Silkroad Client messaging protocol.

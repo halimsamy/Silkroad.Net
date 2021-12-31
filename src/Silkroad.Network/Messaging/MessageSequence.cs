@@ -1,4 +1,4 @@
-﻿namespace Silkroad.Network.Messaging; 
+﻿namespace Silkroad.Network.Messaging;
 
 /// <summary>
 ///     Implements a number Sequence generator for Silkroad network messages.

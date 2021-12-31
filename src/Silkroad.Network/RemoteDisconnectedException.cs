@@ -1,4 +1,4 @@
-﻿namespace Silkroad.Network; 
+﻿namespace Silkroad.Network;
 
 public class RemoteDisconnectedException : Exception {
     public override string Message =>

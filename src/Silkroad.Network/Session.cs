@@ -6,7 +6,7 @@ using Silkroad.Network.Messaging;
 using Silkroad.Network.Messaging.Handshake;
 using Silkroad.Network.Messaging.Protocol;
 
-namespace Silkroad.Network; 
+namespace Silkroad.Network;
 
 /// <summary>
 ///     Implements a Silkroad session interface.
@@ -298,8 +298,6 @@ public class Session : IDisposable {
     /// <param name="msg">The message to respond to.</param>
     /// <returns></returns>
     public async Task RespondAsync(Message msg) {
-        if (msg == null) return;
-
         foreach (var (id, handler) in this._handlers)
             if (msg.ID.Equals(id) || id == MessageID.ANY)
                 await handler.Invoke(this, msg).ConfigureAwait(false);

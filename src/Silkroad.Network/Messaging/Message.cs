@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Silkroad.Network.Messaging; 
+namespace Silkroad.Network.Messaging;
 
 public class Message {
     /// <summary>

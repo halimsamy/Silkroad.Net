@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Silkroad; 
+namespace Silkroad;
 
 public static class Loader {
     /// <summary>
@@ -13,11 +13,9 @@ public static class Loader {
     /// <param name="clientDirectory">The path of the client directory (e.g. C:\Silkroad)</param>
     /// <param name="redirectGateway">Indicates if the Gateway connection should be redirected</param>
     /// <returns>The sro_client process or null of can't start it</returns>
-    public static Process Start(string clientDirectory, bool redirectGateway = false) {
+    public static Process? Start(string clientDirectory, bool redirectGateway = false) {
         var loader = Process.Start("Silkroad.Loader.exe",
             clientDirectory + " Silkroad.Loader.dll" + (redirectGateway ? " redirect" : ""));
-
-        if (loader == null) return null;
 
         loader.WaitForExit();
 

@@ -1,4 +1,4 @@
-﻿namespace Silkroad.Network.Messaging; 
+﻿namespace Silkroad.Network.Messaging;
 
 public class InvalidMessageException : Exception {
     public readonly InvalidMessageReason Reason;
