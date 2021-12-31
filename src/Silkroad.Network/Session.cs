@@ -6,7 +6,7 @@ using Silkroad.Network.Messaging;
 using Silkroad.Network.Messaging.Handshake;
 using Silkroad.Network.Messaging.Protocol;
 
-namespace Silkroad.Network; 
+namespace Silkroad.Network;
 
 /// <summary>
 ///     Implements a Silkroad session interface.

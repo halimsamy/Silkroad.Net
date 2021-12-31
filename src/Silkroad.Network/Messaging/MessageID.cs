@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Silkroad.Network.Messaging; 
+namespace Silkroad.Network.Messaging;
 
 /// <summary>
 ///     Specify a unique <see cref="Message" /> ID, used to identify messages.

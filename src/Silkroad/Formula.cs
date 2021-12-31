@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Silkroad; 
+﻿namespace Silkroad;
 
 /// <summary>
 ///     Implements different formulas for different purposes, Reversed from Silkroad GameServer.

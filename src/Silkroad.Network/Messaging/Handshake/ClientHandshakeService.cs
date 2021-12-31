@@ -2,7 +2,7 @@
 using Silkroad.Cryptography;
 using Silkroad.Network.Messaging.Protocol;
 
-namespace Silkroad.Network.Messaging.Handshake; 
+namespace Silkroad.Network.Messaging.Handshake;
 
 /// <summary>
 ///     Implements Silkroad Client Handshake process.

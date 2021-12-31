@@ -1,4 +1,4 @@
-﻿namespace Silkroad.Network.Messaging; 
+﻿namespace Silkroad.Network.Messaging;
 
 /// <summary>
 ///     Part of the <see cref="MessageID" /> that indicates what this <see cref="Message" /> is used for.

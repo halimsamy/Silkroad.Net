@@ -1,4 +1,4 @@
-﻿namespace Silkroad.Network.Messaging; 
+﻿namespace Silkroad.Network.Messaging;
 
 /// <summary>
 ///     Implements a CRC-8 checksum for Silkroad network messages.

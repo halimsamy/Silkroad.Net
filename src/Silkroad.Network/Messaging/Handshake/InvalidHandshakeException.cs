@@ -1,4 +1,4 @@
-﻿namespace Silkroad.Network.Messaging.Handshake; 
+﻿namespace Silkroad.Network.Messaging.Handshake;
 
 public class InvalidHandshakeException : Exception {
     public override string Message =>

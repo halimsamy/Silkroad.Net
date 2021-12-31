@@ -1,4 +1,4 @@
-﻿namespace Silkroad.Network.Messaging.Protocol; 
+﻿namespace Silkroad.Network.Messaging.Protocol;
 
 /// <summary>
 ///     Determinate the status of the protocol.

@@ -1,6 +1,6 @@
 ﻿using Silkroad.Cryptography;
 
-namespace Silkroad.Network.Messaging.Protocol; 
+namespace Silkroad.Network.Messaging.Protocol;
 
 /// <summary>
 ///     Implements a Silkroad messaging protocol.

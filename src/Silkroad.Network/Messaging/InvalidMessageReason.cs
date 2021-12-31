@@ -1,6 +1,6 @@
 ﻿// ReSharper disable InconsistentNaming
 
-namespace Silkroad.Network.Messaging; 
+namespace Silkroad.Network.Messaging;
 
 public enum InvalidMessageReason {
     InvalidSequence,

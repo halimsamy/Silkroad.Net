@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Silkroad; 
+namespace Silkroad;
 
 public static class Loader {
     /// <summary>
