@@ -108,6 +108,7 @@ namespace Silkroad.Network.Messaging {
         //  ReSharper disable InconsistentNaming
 
         public const ushort
+            ANY = 0x0000,
             HANDSHAKE = 0x5000,
             HANDSHAKE_ACCEPT = 0x9000,
             IDENTITY = 0x2001,

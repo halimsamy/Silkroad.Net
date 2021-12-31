@@ -316,7 +316,7 @@ namespace Silkroad.Network {
             }
 
             foreach (var (id, handler) in this._handlers) {
-                if (msg.ID.Equals(id)) {
+                if (msg.ID.Equals(id) || msg.ID.Value == MessageID.ANY) {
                     await handler.Invoke(this, msg).ConfigureAwait(false);
                 }
             }
