@@ -328,22 +328,12 @@ public class Session : IDisposable {
     ///     after completing the handshake process via <see cref="HandshakeAsync" />.
     /// </summary>
     /// <returns></returns>
-    public async Task RunAsync(CancellationToken cancellationToken) {
+    public async Task RunAsync(CancellationToken cancellationToken = default) {
         await this.HandshakeAsync().ConfigureAwait(false);
 
         while (!cancellationToken.IsCancellationRequested && this.Connected) {
             var msg = await this.ReceiveAsync().ConfigureAwait(false);
             await this.RespondAsync(msg).ConfigureAwait(false);
         }
-    }
-
-    /// <summary>
-    ///     Runs the session until it's closed somehow. This behavior is accomplished by continue
-    ///     receiving via <see cref="ReceiveAsync" /> and responding with <see cref="RespondAsync" />
-    ///     after completing the handshake process via <see cref="HandshakeAsync" />.
-    /// </summary>
-    /// <returns></returns>
-    public Task RunAsync() {
-        return this.RunAsync(default);
     }
 }
