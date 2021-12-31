@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
@@ -7,6 +7,17 @@
     <ItemGroup>
       <ProjectReference Include="..\Silkroad.Cryptography\Silkroad.Cryptography.csproj" />
       <ProjectReference Include="..\Silkroad.Network\Silkroad.Network.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Loader\Silkroad.Loader.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <TargetPath>%(Filename)%(Extension)</TargetPath>
+      </None>
+      <None Update="Loader\Silkroad.Loader.exe">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <TargetPath>%(Filename)%(Extension)</TargetPath>
+      </None>
     </ItemGroup>
 
 </Project>
