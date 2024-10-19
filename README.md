@@ -1,6 +1,8 @@
 ﻿# Silkroad.Net
 An unofficial .NET API wrapper for Silkroad Online. it allows easier writing of bots, emulators and cheat guards.
 
+[![NuGet version](https://badge.fury.io/nu/Silkroad.svg)](https://badge.fury.io/nu/Silkroad)
+
 [Silkroad Online]: https://www.silkroadonline.net/
 
 ## vs SilkroadSecurityAPI
